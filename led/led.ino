@@ -1,5 +1,5 @@
-int redPin = 11;
-int greenPin = 10;
+int redPin = 10;
+int greenPin = 11;
 int bluePin = 9;
  
 void setup()
@@ -7,36 +7,111 @@ void setup()
  pinMode(redPin, OUTPUT);
  pinMode(greenPin, OUTPUT);
  pinMode(bluePin, OUTPUT); 
+ Serial.begin(9600);
 }
 
-int i, j= 0;
-int k = 255;
+// 흰, 빨, 주, 노, 초, 파, 남, 보
+int rgb[][3] = {
+  {255,255,255}, //흰색
+  {255, 0, 0},   // 빨강
+  {255, 127, 0},   // 주황
+  {255, 212, 0},   // 노랑
+  {0, 255, 0}, // 초록
+  {0, 0, 255}, // 파랑
+  {0, 0, 128}, // 남색
+  {139, 0, 255} // 보라
+};
+
+
+
+int cnt = 0;
+
+
+int previous_r = 0, previous_g = 0, previous_b = 0;
+int r = 0, g = 0, b = 0;
+int r_change = 0, g_change = 0, b_change = 0;
+
+
+
+
 void loop()
 {
-  k++;
-  setColor(255, 255, 255);
-  delay(4000);
+
+  r = rgb[cnt][0];
+  g = rgb[cnt][1];
+  b = rgb[cnt][2];
   
-  for(int i=255; i>0;i--){
-    setColor(255, i, i);
+  r_change = previous_r - r;
+  g_change = previous_g - g;
+  b_change = previous_b - b;
+  
+  while ( !((r_change == 0) && (g_change == 0) && (b_change == 0)) ){
+    if (r_change < 0){
+      previous_r++;
+      r_change++;
+    }
+    else if (r_change > 0) {
+      previous_r--;
+      r_change--;   
+    }
+    
+    if (g_change < 0){
+      previous_g++;
+      g_change++;
+    }
+    else if (g_change > 0) {
+      previous_g--;
+      g_change--;   
+    }
+    
+    if (b_change < 0){
+      previous_b++;
+      b_change++;
+    }
+    else if (b_change > 0) {
+      previous_b--;
+      b_change--;   
+    }
+    
+    setColor(previous_r, previous_g, previous_b);
     delay(10);
-  }
+    Serial.print(previous_r);
+    Serial.print(", ");
+    Serial.print(previous_g);
+    Serial.print(", ");
+    Serial.println(previous_b);
+    }
+  
+  Serial.println("=============");
+  Serial.print(previous_r);
+  Serial.print(", ");
+  Serial.print(previous_g);
+  Serial.print(", ");
+  Serial.println(previous_b);
+  Serial.println("=============");
+
+  setColor(previous_r, previous_g, previous_b);
   delay(4000);
 
-  for(int i=0; i<256;i++){
-    setColor(255-i, i, i);
-    delay(10);
+  
+  
+  if ( cnt < (sizeof(rgb) / sizeof(rgb[0]))-1 ) {
+    cnt++;
+  } else {
+    cnt = 0;
   }
-  delay(4000);
-
-  for(int i=0; i<256;i++){
-    setColor(i, 255, 255);
-    delay(10);
-  }
-
+  
+  Serial.println(cnt);
 
 }
- 
+
+
+
+
+
+
+
+
 void setColor(int red, int green, int blue)
 {
   analogWrite(redPin, red);
