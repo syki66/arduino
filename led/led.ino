@@ -110,7 +110,8 @@ void loop()
 
 
 
-
+// pcm 단자일때는 아날로그 쓰면되고
+// 디지털 단자는 digitalWrite(redPin, HIGH); 이런식으로 쓰면됨
 
 void setColor(int red, int green, int blue)
 {
